@@ -24,9 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Pages\" />
       <Folder Include="Tests\" />
-      <Folder Include="Utilities\" />
     </ItemGroup>
 
 </Project>
