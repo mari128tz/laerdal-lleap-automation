@@ -5,7 +5,6 @@ using OpenQA.Selenium.Appium.Windows;
 using LaerdalLLEAPTests.Utilities;
 using LaerdalLLEAPTests.Pages;
 
-
 namespace LaerdalLLEAPTests
 {
     [TestFixture]
@@ -16,6 +15,7 @@ namespace LaerdalLLEAPTests
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
         
         protected SimulationHomePage HomePage;
+        protected InstructorAppPage InstructorApp;
         [SetUp]
         public void TestSetup(){
             try
@@ -24,11 +24,11 @@ namespace LaerdalLLEAPTests
                 var options = new AppiumOptions();
                 
                 //App to launch
-                options.AddAdditionalAppiumOption("app", "Laerdal Simulation Home");
+                options.App = @"{7C5A40EF-A0FB-4BFC-874A-C0F2E0B9FA8E}\Laerdal Medical\Laerdal Simulation Home\LaunchPortal.exe";
                 //PC name
-                options.AddAdditionalAppiumOption("deviceName", "WindowsPC");
+                options.DeviceName = "WindowsPC";
                 //OS
-                options.AddAdditionalAppiumOption("platformName", "Windows");
+                options.PlatformName = "Windows";
                 
                 //Launch LLEAP
                 Driver = new WindowsDriver(new Uri(WindowsApplicationDriverUrl), options);
@@ -37,6 +37,7 @@ namespace LaerdalLLEAPTests
                 Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
                 
                 HomePage = new SimulationHomePage(Driver);
+                InstructorApp = new InstructorAppPage(Driver);
                 
                 //If LLEAP starts successfully
                 Console.WriteLine("Application started successfully.");
@@ -67,9 +68,10 @@ namespace LaerdalLLEAPTests
             }
             finally
             {
-                //closes leap and releases the driver from memory
+                //closes LLEAP and releases the driver from memory
                 Driver?.Dispose();
             }
         }
     }
 }
+
