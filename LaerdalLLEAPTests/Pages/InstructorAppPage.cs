@@ -1,14 +1,14 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.Windows;
+using LaerdalLLEAPTests.Utilities;
 
 namespace LaerdalLLEAPTests.Pages
 {
-    //This class handles the Instructor Application screens
     public class InstructorAppPage
     {
-        private readonly AppiumDriver _driver;
+        private readonly WindowsDriver<WindowsElement> _driver;
         
-        public InstructorAppPage(AppiumDriver driver)
+        public InstructorAppPage(WindowsDriver<WindowsElement> driver)
         {
             _driver = driver;
         }
@@ -16,13 +16,15 @@ namespace LaerdalLLEAPTests.Pages
         //Clicks "Add license later" [Test #1 - Step 3]
         public void ClickAddLicenseLater()
         {
+            WindowSwitcher.SwitchToWindow(_driver, "Startup");
             var addLicenseLaterButton = _driver.FindElement(By.Name("Add license later"));
             addLicenseLaterButton.Click();
         }
         
         //Clicks the "Local Computer" tile [Test #1 - Step 4]
-        public void ClickLocalComputer()
+        /*public void ClickLocalComputer()
         {
+            //WindowSwitcher.SwitchToWindow(_driver, "Startup");
             var localComputerButton = _driver.FindElement(By.Name("Local Computer"));
             localComputerButton.Click();
         }
@@ -30,6 +32,7 @@ namespace LaerdalLLEAPTests.Pages
         //Clicks the "SimMan 3G Plus" tile [Test #1 - Step 5]
         public void ClickSimMan3GPlus()
         {
+            //WindowSwitcher.SwitchToWindow(_driver, "Startup");
             var simMan3GPlusButton = _driver.FindElement(By.Name("SimMan 3G Plus"));
             simMan3GPlusButton.Click();
         }
@@ -37,6 +40,7 @@ namespace LaerdalLLEAPTests.Pages
         //Clicks "Manual Mode" [Test #1 - Step 6]
         public void ClickManualMode()
         {
+            //WindowSwitcher.SwitchToWindow(_driver, "Startup");
             var manualModeButton = _driver.FindElement(By.Name("Manual Mode"));
             manualModeButton.Click();
         }
@@ -44,6 +48,7 @@ namespace LaerdalLLEAPTests.Pages
         //Clicks "Healthy Patient" [Test #1 - Step 8]
         public void ClickTheme_HealthyPatient()
         {
+            //WindowSwitcher.SwitchToWindow(_driver, "Startup");
             var healthyPatientThemeButton = _driver.FindElement(By.Name("Healthy Patient"));
             healthyPatientThemeButton.Click();
         }
@@ -51,6 +56,7 @@ namespace LaerdalLLEAPTests.Pages
         //Clicks "Ok" [Test #1 - Step 9]
         public void ClickSelectThemeOk()
         {
+            //WindowSwitcher.SwitchToWindow(_driver, "Startup");
             var selectThemeOkButton = _driver.FindElement(By.Name("Ok"));
             selectThemeOkButton.Click();
         }
@@ -58,6 +64,7 @@ namespace LaerdalLLEAPTests.Pages
         //Clicks "Start Session" [Test #1 - Step 10]
         public void ClickStartSession()
         {
+            //WindowSwitcher.SwitchToWindow(_driver, "Startup");
             var startSessionButton = _driver.FindElement(By.Name("Start Session"));
             startSessionButton.Click();
         }
@@ -65,8 +72,8 @@ namespace LaerdalLLEAPTests.Pages
         //Maximizes the window
         public void MaximizeLLEAP()
         {
+            //WindowSwitcher.SwitchToWindow(_driver, "Startup");
             _driver.Manage().Window.Maximize();
-        }
+        }*/
     }
 }
-

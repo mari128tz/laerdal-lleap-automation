@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.Windows;
 
 namespace LaerdalLLEAPTests.Utilities;
 
@@ -13,14 +14,14 @@ public static class ScreenshotHelper
     * 1. driver
      2. test name*/
     
-    public static void TakeScreenshot(AppiumDriver driver, string testName)
+    public static void TakeScreenshot(WindowsDriver<WindowsElement> driver, string testName)
     {
         
         // try-catch to prevent the test from crashing due to screenshot errors
         try
         {
             //1. Capture the screen
-            var screenshot = driver.GetScreenshot();
+            var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
             
             //2. Create an easily identifiable file name
             // Format: "TestName_20231201_143025.png"
@@ -28,7 +29,7 @@ public static class ScreenshotHelper
             
             //3. Save the screenshot
             string fullPath = Path.Combine(GetScreenshotDirectory(), fileName);
-            screenshot.SaveAsFile(fullPath);
+            screenshot.SaveAsFile(fullPath, ScreenshotImageFormat.Png);
             
             //4. **DEBUG** Log screenshot name and save location
             Console.WriteLine($"Screenshot {fileName} saved to {fullPath}");
@@ -36,7 +37,7 @@ public static class ScreenshotHelper
         }
         catch (Exception ex)
         {
-            Console.WriteLine("$Failed to take screenshot");
+            Console.WriteLine($"Failed to take screenshot: {ex.Message}");
         }
     }
 

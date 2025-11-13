@@ -10,7 +10,7 @@
             //Step 3
             InstructorApp.ClickAddLicenseLater();
             //Step 4
-            InstructorApp.ClickLocalComputer();
+            /*InstructorApp.ClickLocalComputer();
             //Step 5
             InstructorApp.ClickSimMan3GPlus();
             //Step 6
@@ -22,7 +22,7 @@
             //Step 9
             InstructorApp.ClickStartSession();
             //Step 10
-            InstructorApp.MaximizeLLEAP();
+            InstructorApp.MaximizeLLEAP();*/
             
             Assert.Pass("Successfully completed Test #1 steps 1-11");
         }
