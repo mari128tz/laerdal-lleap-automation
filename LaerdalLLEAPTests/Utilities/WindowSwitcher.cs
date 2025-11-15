@@ -5,70 +5,71 @@ using System.Threading;
 
 namespace LaerdalLLEAPTests.Utilities
 {
+    /// <summary>
     /// Waits for a window with the specified name and switches to it
+    /// </summary>
     public static class WindowSwitcher
     {
         public static void SwitchToWindow(WindowsDriver<WindowsElement> driver, string windowName, int timeoutSecs = 10)
         {
-            Console.WriteLine($"Waiting for window: '{windowName}' (timeout: {timeoutSecs}s)");
-            
             var startTime = DateTime.Now;
-            while (DateTime.Now.Subtract(startTime).TotalMilliseconds < timeoutSecs)
+            while (DateTime.Now.Subtract(startTime).TotalSeconds < timeoutSecs)
             {
                 foreach (var handle in driver.WindowHandles)
                 {
                     driver.SwitchTo().Window(handle);
 
-                    try
-                    {
-                        string currentWindowName = GetWindowName(driver);
+                    string currentWindowName = GetWindowName(driver);
 
-                        if (currentWindowName != null &&
-                            currentWindowName.Contains(windowName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            Console.WriteLine($"✓ Switched to window: '{currentWindowName}'");
-                            return;
-                        }
-                    }
-
-                    catch (Exception ex)
+                    if (currentWindowName != null &&
+                        currentWindowName.Contains(windowName, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine($"Error checking window: {ex.Message}");
+                        return;
                     }
                 }
-                Thread.Sleep(500); // Wait half second before retrying
+                Thread.Sleep(500);
             }
             
-            throw new TimeoutException($"Window containing '{windowName}' not found");
+            throw new TimeoutException($"Window containing '{windowName}' not found within {timeoutSecs} seconds");
         }
+
         private static string GetWindowName(WindowsDriver<WindowsElement> driver)
         {
-            try
+            if (!string.IsNullOrEmpty(driver.Title))
+                return driver.Title;
+            
+            string[] xpaths = {
+                "//Window[@Name]",
+                "//Window",
+                "//Pane//Window",
+                "//*[@LocalizedControlType='window']"
+            };
+            
+            foreach (var xpath in xpaths)
             {
-                // Try to get window title first
-                var title = driver.Title;
-                if (!string.IsNullOrEmpty(title)) 
-                    return title;
-
-                // Try to find the main window element and get its name
-                var windowElement = driver.FindElement(By.XPath("//Window"));
-                return windowElement.GetAttribute("Name") ?? windowElement.GetAttribute("ClassName");
+                try
+                {
+                    var windowElement = driver.FindElement(By.XPath(xpath));
+                    string name = windowElement.GetAttribute("Name");
+                    if (!string.IsNullOrEmpty(name))
+                        return name;
+                }
+                catch
+                {
+                    continue;
+                }
             }
-            catch
-            {
-                return null;
-            }
+            
+            return null;
         }
+
         public static void WaitForNewWindow(WindowsDriver<WindowsElement> driver, int originalWindowCount, int timeoutSeconds = 10)
         {
-            Console.WriteLine($"Waiting for new window (current: {originalWindowCount})...");
-    
             var startTime = DateTime.Now;
             while (DateTime.Now - startTime < TimeSpan.FromSeconds(timeoutSeconds))
             {
                 if (driver.WindowHandles.Count > originalWindowCount)
                 {
-                    Console.WriteLine($"✓ New window detected! Total windows: {driver.WindowHandles.Count}");
                     return;
                 }
                 Thread.Sleep(500);
@@ -76,7 +77,5 @@ namespace LaerdalLLEAPTests.Utilities
     
             throw new TimeoutException($"New window did not appear within {timeoutSeconds} seconds");
         }
-
     }
 }
-
