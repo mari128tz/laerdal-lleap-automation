@@ -24,37 +24,38 @@ namespace LaerdalLLEAPTests
         {
             var options = new AppiumOptions();
             
-            //App to launch - your specific path
             options.AddAdditionalCapability("app", @"C:\Program Files (x86)\Laerdal Medical\Laerdal Simulation Home\LaunchPortal.exe");
             options.AddAdditionalCapability("deviceName", "WindowsPC");
             options.AddAdditionalCapability("platformName", "Windows");
             options.AddAdditionalCapability("ms:waitForAppLaunch", "15");
             
-            //Launch LLEAP
             Driver = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), options);
             
-            //Grace period: The test will wait up to 5 seconds for UI elements to appear
-            //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-            
-            // Create page objects with the main driver
             HomePage = new HomePage(Driver);
-            
-            // InstructorApp will be created later with the InstructorAppDriver
             InstructorApp = null;
         }
 
         [TearDown]
         public void TearDown()
         {
+            string testName = TestContext.CurrentContext.Test.Name;
+            string testStatus = TestContext.CurrentContext.Result.Outcome.Status.ToString();
+            
             if (TestContext.CurrentContext.Result.Outcome.Status == NUnit.Framework.Interfaces.TestStatus.Failed)
             {
+                string errorMessage = TestContext.CurrentContext.Result.Message;
+                TestLogger.Log(testName, $"✗ TEST FAILED: {errorMessage}");
+                
                 if (Driver != null)
                 {
-                    ScreenshotHelper.TakeScreenshot(Driver, TestContext.CurrentContext.Test.Name);
+                    ScreenshotHelper.TakeScreenshot(Driver, testName);
                 }
             }
+            else
+            {
+                TestLogger.Log(testName, "✓ TEST PASSED");
+            }
             
-            // Close both drivers
             InstructorAppDriver?.Dispose();
             Driver?.Dispose();
             Driver = null;

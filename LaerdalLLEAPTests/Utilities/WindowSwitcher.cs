@@ -62,20 +62,26 @@ namespace LaerdalLLEAPTests.Utilities
             
             return null;
         }
-
-        public static void WaitForNewWindow(WindowsDriver<WindowsElement> driver, int originalWindowCount, int timeoutSeconds = 10)
+        
+        
+        public static bool IsWindowPresent(WindowsDriver<WindowsElement> driver, string windowName, int timeoutSecs = 5)
         {
             var startTime = DateTime.Now;
-            while (DateTime.Now - startTime < TimeSpan.FromSeconds(timeoutSeconds))
+            while (DateTime.Now.Subtract(startTime).TotalSeconds < timeoutSecs)
             {
-                if (driver.WindowHandles.Count > originalWindowCount)
+                foreach (var handle in driver.WindowHandles)
                 {
-                    return;
+                    driver.SwitchTo().Window(handle);
+                    string currentWindowName = GetWindowName(driver);
+            
+                    if (currentWindowName != null && currentWindowName.Contains(windowName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
                 }
                 Thread.Sleep(500);
             }
-    
-            throw new TimeoutException($"New window did not appear within {timeoutSeconds} seconds");
+            return false;
         }
     }
 }

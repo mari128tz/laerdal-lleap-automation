@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Windows;
 using OpenQA.Selenium.Appium;
-using System;
+using System.IO;
 
 namespace LaerdalLLEAPTests.Pages
 {
@@ -24,6 +24,24 @@ namespace LaerdalLLEAPTests.Pages
             // Connect to the LLEAP process and return the new driver
             return ConnectToLLEAPProcess();
         }
+
+        public void RightClickHelp()
+        {
+            InputHelper.RightClick(_driver, By.XPath("//Button[@Name='Help']//Image[@AutomationId='MainImage']"));
+        }
+        
+        public void ClickCollectClientLogFiles()
+        {
+            var collectLogsOption = _driver.FindElement(By.Name("Collect client log files"));
+            collectLogsOption.Click();
+        }
+
+        public int LogCount()
+        {
+            return Directory.GetFiles(@"C:\Users\Public\Documents\Laerdal Report Zipped").Length;
+        }
+
+        
         
         private WindowsDriver<WindowsElement> ConnectToLLEAPProcess()
         {
@@ -45,7 +63,7 @@ namespace LaerdalLLEAPTests.Pages
                 lleapOptions.AddAdditionalCapability("platformName", "Windows");
                 
                 var instructorAppDriver = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), lleapOptions);
-                instructorAppDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+                instructorAppDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3);
                 
                 return instructorAppDriver;
             }
@@ -58,6 +76,17 @@ namespace LaerdalLLEAPTests.Pages
         {
             return instructorAppDriver.FindElement(By.Name("Add license later"));
         }
+        public WindowsElement WasHelpButtonRightClicked()
+        {
+            return _driver.FindElement(By.Name("Collect client log files"));
+        }
+        public bool IsLogViewerWindowOpen()
+        {
+            Thread.Sleep(3000);
+            var windows = _driver.FindElements(By.XPath("//Window[starts-with(@Name, 'Select C:\\\\Program Files (x86)\\\\Laerdal Medical\\\\Laerdal Simulation Home\\\\ClientLogCollect')]"));
+            return windows.Count > 0 && windows[0].Displayed;
+        }
+        
         #endregion
         
     }
