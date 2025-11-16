@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Appium.Windows;
 using System.Threading;
 using System.Linq;
+using OpenQA.Selenium.Interactions;
 
 namespace LaerdalLLEAPTests.Pages
 {
@@ -27,14 +28,10 @@ namespace LaerdalLLEAPTests.Pages
         }
         
         //Step 13: For the Lung compliance, change the value to the specified percentage
-        public void SetLungCompliance(int percentage)
+        public void SetLungCompliance()
         {
-            int[] allowedValues = { 0, 33, 67, 100 };
-            if (!allowedValues.Contains(percentage))
-                throw new ArgumentException($"Percentage must be one of: {string.Join(", ", allowedValues)}");
-            
             Thread.Sleep(2000);
-    
+
             var slider = _driver.FindElement(By.XPath("//*[contains(@Name, 'lung compliance') or contains(@HelpText, 'lung compliance') or contains(@AutomationId, 'lung compliance')]"));
             slider.Click();
         }
@@ -50,7 +47,6 @@ namespace LaerdalLLEAPTests.Pages
             
             Thread.Sleep(2000);
             
-            // Set value in modal using text box
             var textBox = _driver.FindElement(By.XPath("//*[@AutomationId='2093']"));
             textBox.Click();
             textBox.Clear();
@@ -62,7 +58,7 @@ namespace LaerdalLLEAPTests.Pages
         }
         
         //Step 15: For the Voices, select the Coughing and play it once
-        public void PlayVocals_Coughing()
+        public void SelectVocals_Coughing()
         {
             Thread.Sleep(1000);
             
@@ -70,13 +66,69 @@ namespace LaerdalLLEAPTests.Pages
             var coughingItem = _driver.FindElement(By.Name("Coughing"));
             coughingItem.Click();
             
-            
-            // Find and click the Play button by AutomationId
-            var playButton = _driver.FindElement(By.XPath("//*[@AutomationId='PlayButton']"));
-            playButton.Click();
-            
-            // Wait for sound to play
-            Thread.Sleep(2000);
         }
+
+        public void PlaySelectedVocals()
+        {
+            // Find and click the Play button by AutomationId
+            var playVocals  = _driver.FindElement(By.XPath("//*[@AutomationId='PlayButton']"));
+            playVocals.Click();
+        }
+        
+        public void CloseApplicationWithX()
+        {
+            var closeButton = _driver.FindElement(By.XPath("//*[@AutomationId='Close']"));
+            closeButton.Click();
+            Thread.Sleep(3000);
+        }
+
+        #region Verifications
+
+        public bool IsEyeStateClosed(WindowsDriver<WindowsElement> driver)
+        {
+            if (_driver.FindElement(By.XPath("//*[@AutomationId='EyesComboBox']")).Text == "Closed")
+                return true;
+            return false;
+        }
+
+        public bool IsHR100(WindowsDriver<WindowsElement> driver)
+        {
+            var hrElement = _driver.FindElement(By.XPath("//*[@AutomationId='11']"));
+            hrElement.Click();
+            
+            Thread.Sleep(2000);
+            
+            var textBox = _driver.FindElement(By.XPath("//*[@AutomationId='2093']"));
+            var okButton = _driver.FindElement(By.Name("OK"));
+            if (textBox.Text == "100")
+            {
+                okButton.Click();
+                return true;
+            }
+            okButton.Click();   
+            return false;
+        }
+
+        public bool IsCoughingSelected(WindowsDriver<WindowsElement> driver)
+        {
+            if (_driver.FindElement(By.Name("Coughing")).Selected)
+                return true;
+            return false;
+        }
+
+        public bool IsVocalPlaying(WindowsDriver<WindowsElement> driver)
+        {
+            if (_driver.FindElement(By.XPath("//*[@AutomationId='StopButton']")).Enabled)
+                return true;
+            return false;
+        }
+
+        public bool DidAppClose(WindowsDriver<WindowsElement> driver)
+        {
+            return _driver.WindowHandles.Count == 0;
+        }
+        #endregion
+        
+        
     }
 }

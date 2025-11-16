@@ -13,13 +13,14 @@ namespace LaerdalLLEAPTests.Pages
         {
             _driver = driver;
         }
-        
+
         //Clicks "Add license later" [Test #1 - Step 3]
         public void ClickAddLicenseLater()
         {
             var addLicenseLaterButton = _driver.FindElement(By.Name("Add license later"));
             addLicenseLaterButton.Click();
         }
+        
         
         //Clicks the "Local Computer" tile [Test #1 - Step 4]
         public void ClickLocalComputer()
@@ -42,19 +43,15 @@ namespace LaerdalLLEAPTests.Pages
             Thread.Sleep(3000);
             var manualModeButton = _driver.FindElement(By.Name("Manual Mode"));
             manualModeButton.Click();
+            WindowSwitcher.SwitchToWindow(_driver, "Select theme", 10);
+        
         }
 
         //Clicks "Healthy Patient" [Test #1 - Step 8]
         public void ClickTheme_HealthyPatient()
         {
-            Thread.Sleep(3000);
-            WindowSwitcher.SwitchToWindow(_driver, "Select theme", 10);
-    
-        
             var healthyPatient = _driver.FindElement(By.Name("Healthy patient"));
             healthyPatient.Click();
-        
-            Console.WriteLine("✓ Clicked second Healthy patient theme");
         }
 
         //Clicks "Ok" [Test #1 - Step 9]
@@ -62,14 +59,13 @@ namespace LaerdalLLEAPTests.Pages
         {
             var selectThemeOkButton = _driver.FindElement(By.Name("Ok"));
             selectThemeOkButton.Click();
+            Thread.Sleep(5000);
+            WindowSwitcher.SwitchToWindow(_driver, "PAUSE", 10);
         }
         
         //Clicks "Start Session" [Test #1 - Step 10]
         public void ClickStartSession()
         {
-            Thread.Sleep(5000);
-            WindowSwitcher.SwitchToWindow(_driver, "PAUSE", 10);
-            
             var startSessionButton = _driver.FindElement(By.Name("Start session"));
             startSessionButton.Click();
         }
@@ -77,13 +73,61 @@ namespace LaerdalLLEAPTests.Pages
         //Maximizes the window
         public void MaximizeLLEAP()
         {
-            _driver.Manage().Window.Maximize();
+            var maximizeButton = _driver.FindElement(By.XPath("//*[@AutomationId='Maximize-Restore']"));
+            maximizeButton.Click();
+        }
+
+        #region Verifications
+        
+        public WindowsElement IsLicenseScreenHandled(WindowsDriver<WindowsElement> instructorAppDriver)
+        {
+            return _driver.FindElement(By.Name("Local computer"));
         }
         
-        public void CloseApplicationWithX()
+        public WindowsElement IsLocalComputerScreenHandled(WindowsDriver<WindowsElement> instructorAppDriver)
         {
-            _driver.Close();
-            Thread.Sleep(3000);
+            return _driver.FindElement(By.Name("SimMan 3G PLUS"));
         }
+        
+        public WindowsElement IsSimManSelected(WindowsDriver<WindowsElement> instructorAppDriver)
+        {
+            Thread.Sleep(3000);
+            return _driver.FindElement(By.Name("Manual Mode"));
+        }
+        
+        public WindowsElement IsManualModeSelected(WindowsDriver<WindowsElement> instructorAppDriver)
+        {
+            Thread.Sleep(3000);
+            return _driver.FindElement(By.Name("Healthy patient"));
+        }
+
+        public bool IsHealthyPatientSelected(WindowsDriver<WindowsElement> instructorAppDriver)
+        {
+            var healthyPatient = _driver.FindElement(By.Name("Healthy patient"));
+            if (healthyPatient.Selected)
+                return true;
+            return false;
+        }
+        
+        public WindowsElement IsSessionReadyToStart(WindowsDriver<WindowsElement> instructorAppDriver)
+        {
+            Thread.Sleep(3000);
+            return _driver.FindElement(By.Name("Start session"));
+        }
+        
+        public WindowsElement WasSessionStarted(WindowsDriver<WindowsElement> instructorAppDriver)
+        {
+            return _driver.FindElement(By.XPath("//*[@AutomationId='EyesComboBox']"));
+        }
+
+        public bool IsWindowMaximized(WindowsDriver<WindowsElement> instructorAppDriver)
+        {
+            var windowSize = _driver.Manage().Window.Size;
+            if (windowSize.Width >= 1200 && windowSize.Height >= 800)
+                return true;
+            return false;
+
+        }
+        #endregion
     }
 }

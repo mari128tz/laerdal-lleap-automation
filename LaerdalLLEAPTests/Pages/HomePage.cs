@@ -14,13 +14,13 @@ namespace LaerdalLLEAPTests.Pages
         {
             _driver = driver;
         }
-
+        
         //Clicks "Instructor Application" and waits for the Startup window
         public WindowsDriver<WindowsElement> ClickInstructorApplication()
         {
             var instructorApp = _driver.FindElement(By.XPath("//Button[.//*[@AutomationId='MainImage']]"));
             instructorApp.Click();
-            
+            Thread.Sleep(5000);
             // Connect to the LLEAP process and return the new driver
             return ConnectToLLEAPProcess();
         }
@@ -49,6 +49,16 @@ namespace LaerdalLLEAPTests.Pages
                 
                 return instructorAppDriver;
             }
+            
         }
+     
+        
+        #region Verifications
+        public WindowsElement IsInstructorAppRunning(WindowsDriver<WindowsElement> instructorAppDriver)
+        {
+            return instructorAppDriver.FindElement(By.Name("Add license later"));
+        }
+        #endregion
+        
     }
 }
